@@ -1,0 +1,11 @@
+{
+  "name": "auth-lab",
+  "private": true,
+  "scripts": {
+    "client": "pnpm --filter client dev",
+    "server": "pnpm --filter server dev"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "better-sqlite3"]
+  }
+}
