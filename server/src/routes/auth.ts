@@ -7,8 +7,8 @@ import { sessionsTable, usersTable } from "../db/schema.js";
 import { requireAuth } from "../middleware/requireAuth.js";
 
 const UserSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8),
+  email: z.email().toLowerCase().trim(),
+  password: z.string().min(8).max(72),
 });
 
 const router = Router();
@@ -112,9 +112,9 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/logout", requireAuth, async (req, res) => {
-  db.delete(sessionsTable).where(
-    eq(sessionsTable.user_id, res.locals["userId"]),
-  );
+  const sessionId = req.cookies.session_id;
+
+  await db.delete(sessionsTable).where(eq(sessionsTable.user_id, sessionId));
 
   res.clearCookie("session_id");
 

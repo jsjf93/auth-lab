@@ -29,7 +29,7 @@ export async function requireAuth(
     return;
   }
 
-  res.locals["userId"] = session.userId;
+  res.locals.userId = session.userId;
 
   next();
 }
