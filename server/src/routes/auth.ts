@@ -114,7 +114,7 @@ router.post("/login", async (req, res) => {
 router.post("/logout", requireAuth, async (req, res) => {
   const sessionId = req.cookies.session_id;
 
-  await db.delete(sessionsTable).where(eq(sessionsTable.user_id, sessionId));
+  await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
 
   res.clearCookie("session_id");
 
