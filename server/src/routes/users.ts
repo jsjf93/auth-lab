@@ -6,7 +6,9 @@ import { requireAuth } from "../middleware/requireAuth.js";
 const router = Router();
 
 router.get("/users", requireAuth, async (_req, res) => {
-  const users = await db.select().from(usersTable);
+  const users = await db
+    .select({ id: usersTable.id, email: usersTable.email })
+    .from(usersTable);
 
   res.json({
     ok: true,
