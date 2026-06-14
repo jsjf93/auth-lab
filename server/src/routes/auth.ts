@@ -4,6 +4,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { sessionsTable, usersTable } from "../db/schema.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 const UserSchema = z.object({
   email: z.email(),
@@ -108,6 +109,16 @@ router.post("/login", async (req, res) => {
     console.error(err);
     res.status(500).json({ ok: false, error: "Internal server error" });
   }
+});
+
+router.post("/logout", requireAuth, async (req, res) => {
+  db.delete(sessionsTable).where(
+    eq(sessionsTable.user_id, res.locals["userId"]),
+  );
+
+  res.clearCookie("session_id");
+
+  res.status(200).json({ ok: true });
 });
 
 export default router;
