@@ -33,9 +33,12 @@ export async function requireAuth(
 
   res.locals.userId = session.userId;
 
-  await db.update(sessionsTable).set({
-    expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-  });
+  await db
+    .update(sessionsTable)
+    .set({
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    })
+    .where(eq(sessionsTable.id, sessionId));
 
   next();
 }
