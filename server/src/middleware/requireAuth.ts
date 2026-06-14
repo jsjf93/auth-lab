@@ -25,11 +25,17 @@ export async function requireAuth(
     .get();
 
   if (!session || session.expiresAt < new Date()) {
+    await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
+
     res.status(401).json({ ok: false, error: "Not authorised" });
     return;
   }
 
   res.locals.userId = session.userId;
+
+  await db.update(sessionsTable).set({
+    expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
 
   next();
 }

@@ -5,6 +5,14 @@ import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { sessionsTable, usersTable } from "../db/schema.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+import rateLimit from "express-rate-limit";
+
+const authLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 10,
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false,
+});
 
 const UserSchema = z.object({
   email: z.email().toLowerCase().trim(),
@@ -13,7 +21,7 @@ const UserSchema = z.object({
 
 const router = Router();
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", authLimit, async (req, res) => {
   try {
     const result = UserSchema.safeParse(req.body);
     if (result.error) {
@@ -54,7 +62,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", authLimit, async (req, res) => {
   try {
     const result = UserSchema.safeParse(req.body);
 
